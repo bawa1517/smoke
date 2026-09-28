@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f6f7fb" />
+    <title>Taskwell - Todo Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#" aria-label="Taskwell home">
+          <span class="brand-mark">T</span>
+          <span>taskwell</span>
+        </a>
+
+        <div class="sidebar-intro">
+          <p class="eyebrow">YOUR SPACE</p>
+          <h1>Make room<br />for what matters.</h1>
+          <p class="sidebar-copy">A quiet place to collect today's little wins.</p>
+        </div>
+
+        <div class="sidebar-note">
+          <span class="note-icon">+</span>
+          <div>
+            <strong>Small steps count</strong>
+            <p>Finish one thing, then take a breath.</p>
+          </div>
+        </div>
+      </aside>
+
+      <section class="content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="today-label">TODAY</p>
+            <p class="date-line" id="current-date"></p>
+          </div>
+          <div class="streak-pill" aria-label="Current task streak">
+            <span class="streak-dot"></span>
+            <span><strong id="streak-count">0</strong> day streak</span>
+          </div>
+        </header>
+
+        <section class="hero-row">
+          <div>
+            <p class="eyebrow accent-eyebrow">YOUR FOCUS</p>
+            <h2 id="focus-title">A fresh start.</h2>
+            <p class="focus-copy" id="focus-copy">Add something small to get moving.</p>
+          </div>
+          <div class="progress-ring" id="progress-ring" aria-label="0 percent complete">
+            <span id="progress-value">0%</span>
+          </div>
+        </section>
+
+        <form class="add-task" id="task-form">
+          <label class="sr-only" for="task-input">Add a task</label>
+          <input id="task-input" type="text" maxlength="100" placeholder="What needs doing?" autocomplete="off" />
+          <button class="primary-button" type="submit"><span>+</span> Add task</button>
+        </form>
+
+        <div class="task-toolbar">
+          <div class="filters" role="group" aria-label="Task filters">
+            <button class="filter-button active" type="button" data-filter="all">All <span id="all-count">0</span></button>
+            <button class="filter-button" type="button" data-filter="active">Open <span id="active-count">0</span></button>
+            <button class="filter-button" type="button" data-filter="completed">Done <span id="completed-count">0</span></button>
+          </div>
+          <button class="text-button" id="clear-completed" type="button">Clear completed</button>
+        </div>
+
+        <section class="task-list" id="task-list" aria-live="polite"></section>
+        <p class="empty-state" id="empty-state" hidden></p>
+      </section>
+    </main>
+  </body>
+</html>

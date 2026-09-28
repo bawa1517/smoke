@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<title>Mission Control</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root{
+    --bg:#ffffff; --bg-elevated:#fafafa;
+    --line:#e5e5e5; --line-strong:#d4d4d4;
+    --ink:#171717; --ink-2:#525252; --ink-3:#a3a3a3; --mono-ink:#737373;
+    --blue:#1d4ed8; --blue-light:#eff6ff; --blue-dark:#1e40af;
+    --low:#b3392f; --low-soft:#fdf1f0;
+    --mid:#a36a1c; --mid-soft:#fdf6ea;
+    --high:#1f7a4d; --high-soft:#edf7f1;
+    --sans:Manrope,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans);
+       padding:0 2rem 6rem;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:64rem;margin:0 auto}
+  a{color:var(--blue)}
+  p{color:var(--ink-2)}
+  strong{color:var(--ink);font-weight:700}
+  ul,ol{color:var(--ink-2)}
+  li{margin:.3rem 0}
+  code{font-family:var(--mono);font-size:.85em;background:var(--blue-light);
+       color:var(--blue-dark);padding:.1em .35em}
+  header{padding:4.5rem 0 2.8rem;border-bottom:1px solid var(--line)}
+  .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;
+          text-transform:uppercase;color:var(--mono-ink);margin:0 0 1rem;
+          display:flex;align-items:center;gap:.75rem}
+  .kicker::before{content:"";width:2rem;height:3px;background:var(--blue)}
+  h1{font-weight:800;letter-spacing:-.03em;line-height:1.15;
+     font-size:clamp(1.5rem,2.8vw,2.2rem);margin:0;max-width:38ch;text-wrap:balance}
+  section{padding:3rem 0 0}
+  h2.label{display:flex;align-items:center;gap:.75rem;margin:0 0 1.4rem;
+     font-family:var(--mono);font-size:.72rem;font-weight:600;
+     letter-spacing:.08em;text-transform:uppercase;color:var(--mono-ink)}
+  h2.label::before{content:"";width:2rem;height:3px;background:var(--blue)}
+  .card{background:var(--bg);border:1px solid var(--line);
+        padding:1.2rem 1.4rem;margin:0 0 .8rem}
+  .card p{margin:.2rem 0;max-width:75ch;font-size:.94rem}
+  .file{font-family:var(--mono);font-size:.72rem;color:var(--mono-ink);letter-spacing:.03em}
+  ol.walk{margin:0;padding:0;list-style:none;counter-reset:st}
+  ol.walk li{counter-increment:st;display:flex;gap:1.1rem;align-items:baseline;
+             background:var(--bg);border:1px solid var(--line);
+             padding:.95rem 1.2rem;margin-bottom:.55rem;font-size:.95rem}
+  ol.walk li::before{content:counter(st,decimal-leading-zero);font-family:var(--mono);
+             font-weight:700;font-size:1.1rem;color:var(--blue);min-width:1.8rem}
+  ol.walk li>div{color:var(--ink-2)}
+  ol.walk li>div strong{color:var(--ink)}
+  .tag{font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;
+       text-transform:uppercase;padding:.22rem .6rem;flex-shrink:0}
+  .tag.built{background:var(--high-soft);color:var(--high)}
+  .tag.planned{background:var(--mid-soft);color:var(--mid)}
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);margin:.7rem 0}
+  table{border-collapse:collapse;width:100%;font-size:.9rem;background:var(--bg)}
+  th,td{text-align:left;padding:.65rem .9rem;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  th{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;
+     text-transform:uppercase;color:var(--mono-ink);font-weight:600}
+  details.fold{background:var(--bg);border:1px solid var(--line);margin:0 0 .55rem}
+  details.fold summary{cursor:pointer;padding:.9rem 1.2rem;font-size:.95rem;
+        color:var(--ink);list-style:none;display:flex;gap:.8rem;align-items:baseline}
+  details.fold summary::-webkit-details-marker{display:none}
+  details.fold summary::before{content:"+";font-family:var(--mono);font-weight:700;
+        color:var(--blue);min-width:1rem}
+  details.fold[open] summary::before{content:"–"}
+  details.fold .fold-body{padding:0 1.2rem 1rem 3rem;font-size:.92rem;color:var(--ink-2)}
+  nav.anchornav{position:sticky;top:0;z-index:5;display:flex;gap:1.4rem;
+        overflow-x:auto;white-space:nowrap;background:var(--bg);
+        border-bottom:1px solid var(--line);padding:.85rem 0;margin:0}
+  nav.anchornav a{font-family:var(--mono);font-size:.7rem;font-weight:600;
+        letter-spacing:.06em;text-transform:uppercase;color:var(--mono-ink);
+        text-decoration:none;flex-shrink:0}
+  nav.anchornav a:hover{color:var(--blue)}
+  ul.check{list-style:none;margin:0;padding:0}
+  ul.check li{display:flex;gap:.7rem;margin:.55rem 0;font-size:.94rem}
+  ul.check li .mark{font-family:var(--mono);flex-shrink:0}
+  ul.check li.done{color:var(--ink-3)}
+  ul.check li.done .mark{color:var(--high)}
+  ul.check li.done strong{color:var(--ink-2)}
+  ul.check li.open .mark{color:var(--mid)}
+  .totals{font-family:var(--mono);font-size:.72rem;color:var(--mono-ink);margin:0 0 .8rem}
+  .foot{border-top:1px solid var(--line);padding-top:1.1rem;margin-top:3.5rem;
+        font-size:.76rem;color:var(--ink-3);font-family:var(--mono);line-height:1.6}
+  .pill{font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;padding:.2rem .55rem;white-space:nowrap}
+  .pill.ok{background:var(--high-soft);color:var(--high)}
+  .pill.warn{background:var(--mid-soft);color:var(--mid)}
+  .pill.bad{background:var(--low-soft);color:var(--low)}
+  td.num{font-family:var(--mono);color:var(--blue);font-weight:700}
+  button.more{font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;
+        background:none;border:1px solid var(--line-strong);color:var(--ink-2);padding:.25rem .6rem;cursor:pointer}
+  button.more:hover{border-color:var(--blue);color:var(--blue)}
+  dialog{border:1px solid var(--line-strong);padding:1.4rem 1.6rem;max-width:44rem;font:15px/1.6 var(--sans);color:var(--ink-2)}
+  dialog::backdrop{background:rgba(0,0,0,.25)}
+  dialog h3{margin:.2rem 0 .8rem;color:var(--ink);font-size:1.1rem}
+  dialog p{margin:.4rem 0}
+  table.grades td:first-child{white-space:nowrap;font-weight:700;color:var(--ink)}
+</style>
+</head>
+<body>
+<!-- Run python3 render_board.py after board changes; the sections between the BOARD markers are generated. -->
+<div class="wrap">
+
+<header>
+  <p class="kicker">Mission control · agent-readiness</p>
+  <!-- Verdict: two sentences at most — the score now, and what happens next. Never a count of rows. -->
+  <h1>The kit files and hooks are in place; the root entrypoint waits on owner decisions about ownership and local startup.</h1>
+</header>
+
+<nav class="anchornav">
+  <a href="#where">Where are we</a>
+  <a href="#owner">Needs the owner</a>
+  <a href="#work">The work</a>
+  <a href="#noticed">Noticed inside the code</a>
+  <a href="#learnings">Learnings for harness-kit</a>
+  <a href="#links">Instruments</a>
+</nav>
+
+<section id="where">
+  <h2 class="label">Where are we</h2>
+  <div class="tablewrap"><table class="grades">
+    <tr><th>Area</th><th>Before scaffolding</th><th>Current state</th><th>After scaffolding</th><th>What closes the gap</th><th>Rows</th></tr>
+    <tr><td>Agent entrypoints</td><td>0/10</td><td>—</td><td>—</td><td>No entrypoint, glossary, or docs index existed.</td><td>—</td></tr>
+    <tr><td>Proof and verification</td><td>0/10</td><td>—</td><td>—</td><td>No tests, test command, or verify gate existed.</td><td>—</td></tr>
+    <tr><td>Debugging readiness</td><td>0/10</td><td>—</td><td>—</td><td>No logs, diagnostics, or debugging protocol existed.</td><td>—</td></tr>
+    <tr><td>Knowledge compounding</td><td>0/10</td><td>—</td><td>—</td><td>No breadcrumbs, patterns, or error ledger existed.</td><td>—</td></tr>
+    <tr><td>Disk-anchored work</td><td>0/10</td><td>—</td><td>—</td><td>No tracker or scratch convention existed.</td><td>—</td></tr>
+    <tr><td>Hygiene</td><td>2/10</td><td>—</td><td>—</td><td>No secrets or temp debris appeared in the listing; no .gitignore or README existed.</td><td>—</td></tr>
+    <tr><td>Cost and delegation</td><td>0/10</td><td>—</td><td>—</td><td>No model-routing or cost guidance existed.</td><td>—</td></tr>
+    <tr><td>Human legibility</td><td>1/10</td><td>—</td><td>—</td><td>App text exists, but setup and operator docs did not.</td><td>—</td></tr>
+    <tr><td>Skills and audits</td><td>0/10</td><td>—</td><td>—</td><td>No workspace procedures or audit findings existed.</td><td>—</td></tr>
+    <tr><td>Running it locally</td><td>2/10</td><td>—</td><td>—</td><td>Static HTML and JavaScript are present; setup steps and one-command tooling were absent.</td><td>—</td></tr>
+    <tr><td>Guardrails</td><td>0/10</td><td>—</td><td>—</td><td>No entrypoint or write-boundary hook existed.</td><td>—</td></tr>
+    <tr><td>Measured readiness</td><td>0/10</td><td>—</td><td>—</td><td>No scenarios or proof report existed.</td><td>—</td></tr>
+  </table></div>
+  <p class="totals">Each score is out of 10: 0–2 nothing there, 3–5 only its author could use it, 6–8 present and documented, 9–10 an agent landing cold could use it today. After scaffolding stays a dash until every row on the board has been worked.</p>
+</section>
+
+<!-- BOARD:START -->
+<section id="owner"><h2 class="label">What needs the owner</h2>
+<div class="card"><p>Nothing right now.</p></div>
+<details class="fold"><summary><strong>2 decided</strong></summary><div class="fold-body"><div class="tablewrap"><table><tr>
+<th>Decision</th>
+<th>Status</th>
+<th></th></tr>
+<tr>
+<td><strong>Should the workspace root own the app guidance and docs?</strong></td>
+<td><span class="pill ok">decided</span></td>
+<td><button class="more" onclick="document.getElementById('d-D1').showModal()">detail</button></td></tr>
+<tr>
+<td><strong>Should FastAPI serve the UI and API from the same origin?</strong></td>
+<td><span class="pill ok">decided</span></td>
+<td><button class="more" onclick="document.getElementById('d-D2').showModal()">detail</button></td></tr>
+</table></div></div></details>
+</section>
+<section id="work"><h2 class="label">The work</h2>
+<p class="totals">1 rows: 1 closed / 0 open. Priority first, then dependency order; the first row is what happens next. A bug row is broken behaviour with no task around it; a task row names the bug it closes in its detail.</p>
+<div class="card"><p>Nothing open.</p></div>
+<details class="fold"><summary><strong>1 closed</strong></summary><div class="fold-body"><div class="tablewrap"><table><tr>
+<th>Kind</th>
+<th>What</th>
+<th>Status</th>
+<th></th></tr>
+<tr>
+<td><span class="pill warn">task</span></td>
+<td><strong>Record the Taskwell API demo decisions and leave the exercise parked</strong></td>
+<td><span class="pill ok">done</span></td>
+<td><button class="more" onclick="document.getElementById('d-T1').showModal()">detail</button></td></tr>
+</table></div></div></details>
+</section>
+<section id="noticed"><h2 class="label">Noticed inside the code</h2>
+<div class="card"><p>Nothing noticed right now.</p></div>
+</section>
+<section id="learnings"><h2 class="label">Learnings for harness-kit</h2>
+<details class="fold"><summary><strong>Three things this deployment taught, waiting for harness-kit</strong></summary><div class="fold-body"><ul><li>The docs index points readiness readers to a missing quickstart <span class="file">docs/_INDEX.md; update the kit index to point at a quickstart that exists or will be created.</span></li><li>The docs index calls writeup gitignored when no ignore rule exists <span class="file">docs/_INDEX.md; distinguish the intended ignore convention from actual workspace state or provide the ignore setup.</span></li><li>The copy manifest cannot record the kit commit <span class="file">scaffold/kit_copy.py; obtain source version from an available release marker or explicitly document unknown.</span></li></ul></div></details>
+</section>
+<dialog id="d-D1"><form method="dialog"><p class="kicker">decision · P0 · decided</p><h3>Should the workspace root own the app guidance and docs?</h3><p><strong>Closes when.</strong> The user specified that the FastAPI contract work belongs in this workspace, so the workspace root owns its app guidance and docs.</p><p><strong>Notes.</strong> Resolved by the user’s request to write the FastAPI contracts here.</p><p class="file">D1</p><button class="more">close</button></form></dialog>
+<dialog id="d-D2"><form method="dialog"><p class="kicker">decision · P1 · decided</p><h3>Should FastAPI serve the UI and API from the same origin?</h3><p><strong>Closes when.</strong> The browser UI and FastAPI API share one origin, using unprefixed `/tasks` routes.</p><p><strong>Notes.</strong> The user selected same-origin hosting during the contract interview. This replaces the earlier proposal to use Python’s static server as the complete app start command; the actual FastAPI launch command depends on a module that has not been created.</p><p class="file">D2</p><button class="more">close</button></form></dialog>
+<dialog id="d-T1"><form method="dialog"><p class="kicker">task · P2 · done</p><h3>Record the Taskwell API demo decisions and leave the exercise parked</h3><p><strong>Closes when.</strong> The interview decisions are summarized in writeup/fastapi-contracts/RESUME.md; no OpenAPI YAML or implementation was created.</p><p><strong>Notes.</strong> The user said this was a demo task and asked to leave it. The recorded design was for a local single-user Taskwell UI with no auth</p><p class="file">T1</p><button class="more">close</button></form></dialog>
+<!-- BOARD:END -->
+
+<section id="links">
+  <h2 class="label">Instruments and references</h2>
+  <div class="tablewrap"><table>
+    <tr><th>What</th><th>Where</th></tr>
+    <tr><td>Workspace state and decisions</td><td>RESUME.md and board.csv</td></tr>
+    <tr><td>Scaffold instructions</td><td>/home/nikki/KIT/init-scaffolding/initiate-scaffold.md</td></tr>
+  </table></div>
+</section>
+
+<p class="foot">writeup/agent-readiness · board.csv is the source; python3 render_board.py rewrites the board sections.</p>
+</div>
+</body>
+</html>
